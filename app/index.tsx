@@ -13,7 +13,7 @@ export default function Index() {
 
     const redirect = async () => {
       if (session) {
-        // router.replace("/(tabs)/portfolio");
+        router.replace("/(tabs)/portfolio");
         return;
       }
 

@@ -8,7 +8,7 @@ export default function AuthLayout() {
 
   useEffect(() => {
     if (initialized && session) {
-      // router.replace("/(tabs)/portfolio");
+      router.replace("/(tabs)/portfolio");
     }
   }, [initialized, session]);
 

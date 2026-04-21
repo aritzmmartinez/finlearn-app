@@ -29,7 +29,7 @@ export default function LoginScreen() {
     try {
       await signIn(email.trim(), password);
       console.log("Login successful");
-      // router.replace("/(tabs)/portfolio");
+      router.replace("/(tabs)/portfolio");
     } catch (err: any) {
       setErrors({ password: "Incorrect email or password" });
     }

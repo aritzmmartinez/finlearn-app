@@ -1,11 +1,9 @@
-// ─── Portfolio ────────────────────────────────────────────────────────────────
-
 export interface Portfolio {
   id: string;
   user_id: string;
   name: string;
   description?: string;
-  currency: string; // 'EUR' | 'USD' | ...
+  currency: string;
   created_at: string;
   updated_at: string;
 }
@@ -18,8 +16,6 @@ export interface PortfolioWithStats extends Portfolio {
   positions_count: number;
   positions: Position[];
 }
-
-// ─── Position ─────────────────────────────────────────────────────────────────
 
 export interface Position {
   id: string;
@@ -34,7 +30,7 @@ export interface Position {
   gain_loss: number;
   gain_loss_pct: number;
   currency: string;
-  weight: number; // % of portfolio
+  weight: number;
   country?: string;
   sector?: string;
   created_at: string;
@@ -42,8 +38,6 @@ export interface Position {
 }
 
 export type AssetType = "stock" | "etf" | "crypto" | "bond" | "fund" | "other";
-
-// ─── Analysis ────────────────────────────────────────────────────────────────
 
 export interface PortfolioAnalysis {
   id: string;
@@ -66,7 +60,7 @@ export interface Insight {
 
 export interface Distribution {
   label: string;
-  value: number; // percentage
+  value: number;
   color?: string;
 }
 
@@ -74,8 +68,6 @@ export interface OverlapWarning {
   tickers: string[];
   message: string;
 }
-
-// ─── Request/Response ─────────────────────────────────────────────────────────
 
 export interface CreatePortfolioDto {
   name: string;

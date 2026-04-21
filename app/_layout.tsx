@@ -1,5 +1,7 @@
-import { useAuthStore } from "@/src/stores/auth.store";
-import { colors } from "@/src/theme";
+import { AnimatedSplash } from "@/components/AnimatedSplash";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { useAuthStore } from "@/stores/auth.store";
+import { colors } from "@/theme";
 import {
   DMSans_400Regular,
   DMSans_500Medium,
@@ -11,7 +13,8 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
@@ -20,17 +23,21 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      staleTime: 1000 * 60 * 5, // 5 min
+      staleTime: 1000 * 60 * 5,
     },
   },
 });
 
-function AppContent() {
-  const { initialize } = useAuthStore();
+function AppContent({ onReady }: { onReady: () => void }) {
+  const { initialize, initialized } = useAuthStore();
 
   useEffect(() => {
     initialize();
   }, []);
+
+  useEffect(() => {
+    if (initialized) onReady();
+  }, [initialized]);
 
   return (
     <>
@@ -39,12 +46,16 @@ function AppContent() {
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="portfolio" />
       </Stack>
     </>
   );
 }
 
 export default function RootLayout() {
+  const [appReady, setAppReady] = useState(false);
+  const [splashDone, setSplashDone] = useState(false);
+
   const [fontsLoaded, fontError] = useFonts({
     Syne_600SemiBold,
     Syne_700Bold,
@@ -53,18 +64,31 @@ export default function RootLayout() {
     DMSans_600SemiBold,
   });
 
-  useEffect(() => {
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
+  const fontsReady = fontsLoaded || !!fontError;
 
-  if (!fontsLoaded && !fontError) return null;
+  useEffect(() => {
+    if (fontsReady) SplashScreen.hideAsync();
+  }, [fontsReady]);
+
+  const ready = fontsReady && appReady;
+
+  if (!fontsReady) return null;
 
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <AppContent />
+        <ErrorBoundary>
+          <View style={{ flex: 1 }}>
+            <AppContent onReady={() => setAppReady(true)} />
+
+            {!splashDone && (
+              <AnimatedSplash
+                ready={ready}
+                onFinish={() => setSplashDone(true)}
+              />
+            )}
+          </View>
+        </ErrorBoundary>
       </QueryClientProvider>
     </SafeAreaProvider>
   );

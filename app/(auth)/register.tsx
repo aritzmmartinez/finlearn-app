@@ -33,7 +33,7 @@ export default function RegisterScreen() {
     if (!validate()) return;
     try {
       await signUp(email.trim().toLowerCase(), password, name.trim());
-      // router.replace("/(tabs)/portfolio");
+      router.replace("/(tabs)/portfolio");
     } catch (err: any) {
       const msg = err?.message ?? "";
       if (msg.includes("already")) {
